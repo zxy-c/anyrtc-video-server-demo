@@ -1,0 +1,30 @@
+POST  https://1c9S0yQAEZ6wM0qJGtpc9rIN7NdIwQPO:iTTDArN9ov7SnEoSgKmDaNdqVZeyVVXt@api.agrtc.cn/v1/apps/540a416d66908f6799b9d1da3c8b4162/cloud_recording/acquire
+Content-Type: application/json;charset=utf-8
+
+{
+  "cname": "lbj",
+  "uid": "673468"
+}
+
+###
+POST https://1c9S0yQAEZ6wM0qJGtpc9rIN7NdIwQPO:iTTDArN9ov7SnEoSgKmDaNdqVZeyVVXt@api.agrtc.cn/v1/apps/540a416d66908f6799b9d1da3c8b4162/cloud_recording/resourceid/ujH4CJVaNo1U3AbpCKN1hzc3t1e2qlFXcFRIfZa0EZzBax9kk0wMovLTyCzFaQNh/mode/individual/start
+Content-Type: application/json;charset=utf-8
+
+{
+  "cname": "45757hh",
+  "uid": "f87329e3-ea5c-4009-95a6-4a11fb3adbee",
+  "clientRequest": {
+    "storageConfig": {
+      "vendor": 2,
+      "region": 12,
+      "bucket": "anytrc",
+      "accessKey": "LTAI5tKkHpXZxb6asAP326BG",
+      "secretKey": "hpnWTkDQ6xlMjaNpOqpy7IJn50Ks7J",
+      "fileNamePrefix": []
+    },
+    "recordingConfig": {
+      "channelType": 0,
+      "streamTypes": 2
+    }
+  }
+}
