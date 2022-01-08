@@ -33,6 +33,10 @@ dependencies {
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
     compileOnly("org.projectlombok:lombok:1.18.22")
     implementation("commons-io:commons-io:2.11.0")
+    implementation("com.aliyun.oss:aliyun-sdk-oss:3.10.2")
+    implementation("javax.xml.bind:jaxb-api:2.3.1")
+    implementation("javax.activation:activation:1.1.1")
+    implementation("org.glassfish.jaxb:jaxb-runtime:2.3.3")
 }
 
 tasks.withType<KotlinCompile> {
