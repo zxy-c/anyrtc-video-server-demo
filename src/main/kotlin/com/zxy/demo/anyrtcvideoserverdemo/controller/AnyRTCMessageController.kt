@@ -3,6 +3,7 @@ package com.zxy.demo.anyrtcvideoserverdemo.controller
 import com.aliyun.oss.OSS
 import com.zxy.demo.anyrtcvideoserverdemo.configuration.AliyunOSSProperties
 import com.zxy.demo.anyrtcvideoserverdemo.service.MinIOService
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -14,7 +15,7 @@ class AnyRTCMessageController(
     private val minIOService: MinIOService
 ) {
 
-    @RequestMapping
+    @PostMapping
     fun events() {
         // TODO calllback from
         val key = ""
