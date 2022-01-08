@@ -29,6 +29,10 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    implementation ("io.minio:minio:8.3.3")
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly("org.projectlombok:lombok:1.18.22")
+    implementation("commons-io:commons-io:2.11.0")
 }
 
 tasks.withType<KotlinCompile> {
