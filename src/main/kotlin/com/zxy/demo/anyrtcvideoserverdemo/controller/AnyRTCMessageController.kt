@@ -1,43 +1,90 @@
 package com.zxy.demo.anyrtcvideoserverdemo.controller
 
 import com.aliyun.oss.OSS
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.zxy.demo.anyrtcvideoserverdemo.configuration.AliyunOSSProperties
 import com.zxy.demo.anyrtcvideoserverdemo.service.MinIOService
 import com.zxy.demo.anyrtcvideoserverdemo.utils.LoggerDelegate
-import org.springframework.web.bind.annotation.ExceptionHandler
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("anyrtc/events")
 class AnyRTCMessageController(
     private val aliyunOSSClient: OSS,
     private val aliyunOSSProperties: AliyunOSSProperties,
-    private val minIOService: MinIOService
+    private val minIOService: MinIOService,
+    private val objectMapper: ObjectMapper
 ) {
 
-    companion object{
+    companion object {
         private val log by LoggerDelegate()
     }
 
     @ExceptionHandler(Exception::class)
-    fun anyException(e:Exception){
-        log.error("Exception from anyrtc/events",e)
+    fun anyException(e: Exception) {
+        log.error("Exception from anyrtc/events", e)
     }
 
+    data class AnyRTCEvent(
+        val eventType: Int,
+        val productId: Int,
+        val noticeId: String,
+        val notifyMs: Long,
+        val payload: Payload
+    ) {
+        data class Payload(
+            val cname: String,
+            val uid: String,
+            val sid: String,
+            val sequence: Int,
+            val sendts: Long,
+            val serviceType: Int,
+            val details: JsonNode
+        ) {
+            data class UploadedEvent(
+                val msgName: String,
+                val status: String,
+                val fileList: List<FileItem>
+            ) {
+                data class FileItem(
+                    val fileName: String,
+                    val trackType: Type,
+                    val uid: String,
+                    val mixedAllUser: Boolean,
+                    val isPlayable: Boolean,
+                    val liceStartTime: Long
+                ) {
+                    @Suppress("EnumEntryName")
+                    enum class Type {
+                        audio_and_video,
+                        audio,
+                        video
+                    }
+                }
+            }
+        }
+    }
+
+
     @PostMapping
-    fun events() {
-        // TODO calllback from
-        val key = ""
-        val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, key)
-        val uid = ""
-        minIOService.uploadFile(
-            ossObject.objectContent,
-            ossObject.objectMetadata.contentLength,
-            "video/livestreaming/$uid/$key",
-            ossObject.objectMetadata.contentType
-        )
+    fun events(@RequestBody anyRTCEvent: AnyRTCEvent) {
+        log.info("anyrtc event : {}",anyRTCEvent)
+        if (anyRTCEvent.eventType==31){
+            val uploadedEvent = objectMapper.treeToValue<AnyRTCEvent.Payload.UploadedEvent>(anyRTCEvent.payload.details)
+            log.info("uploaded event: {}",uploadedEvent)
+//            // TODO calllback from
+//            val key = ""
+//            val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, key)
+//            val uid = ""
+//            minIOService.uploadFile(
+//                ossObject.objectContent,
+//                ossObject.objectMetadata.contentLength,
+//                "video/livestreaming/$uid/$key",
+//                ossObject.objectMetadata.contentType
+//            )
+        }
     }
 
 }
