@@ -5,6 +5,11 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.6.10"
     kotlin("plugin.spring") version "1.6.10"
+    kotlin("plugin.lombok") version "1.6.10"
+}
+
+ext{
+    this["okhttp3.version"] = "4.9.0"
 }
 
 group = "com.zxy.demo"
@@ -31,7 +36,9 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation ("io.minio:minio:8.3.3")
     // https://mvnrepository.com/artifact/org.projectlombok/lombok
-    compileOnly("org.projectlombok:lombok:1.18.22")
+    val lombokNotation = "org.projectlombok:lombok:1.18.22"
+    compileOnly(lombokNotation)
+    annotationProcessor(lombokNotation)
     implementation("commons-io:commons-io:2.11.0")
     implementation("com.aliyun.oss:aliyun-sdk-oss:3.10.2")
     implementation("javax.xml.bind:jaxb-api:2.3.1")
