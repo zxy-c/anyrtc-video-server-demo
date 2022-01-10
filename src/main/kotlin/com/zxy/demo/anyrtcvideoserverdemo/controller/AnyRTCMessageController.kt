@@ -1,15 +1,16 @@
 package com.zxy.demo.anyrtcvideoserverdemo.controller
 
 import com.aliyun.oss.OSS
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.zxy.demo.anyrtcvideoserverdemo.configuration.AliyunOSSProperties
 import com.zxy.demo.anyrtcvideoserverdemo.service.MinIOService
 import com.zxy.demo.anyrtcvideoserverdemo.utils.LoggerDelegate
+import org.apache.commons.io.IOUtils
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
+import java.io.ByteArrayInputStream
+import java.nio.charset.Charset
 
 @RestController
 @RequestMapping("anyrtc/events")
@@ -43,7 +44,7 @@ class AnyRTCMessageController(
             val sequence: Int,
             val sendts: Long,
             val serviceType: Int,
-            val details: JsonNode
+            val details: String
         ) {
             data class UploadedEvent(
                 val msgName: String,
@@ -70,23 +71,44 @@ class AnyRTCMessageController(
     }
 
 
-    @PostMapping(consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE,MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_VALUE])
     fun events(@RequestBody body: String) {
-        log.info("anyrtc event : {}",body)
+        log.info("anyrtc event : {}", body)
         val anyRTCEvent = objectMapper.readValue<AnyRTCEvent>(body)
-        if (anyRTCEvent.eventType==31){
-            val uploadedEvent = objectMapper.treeToValue<AnyRTCEvent.Payload.UploadedEvent>(anyRTCEvent.payload.details)
-            log.info("uploaded event: {}",uploadedEvent)
+        if (anyRTCEvent.eventType == 31) {
+            val uploadedEvent = objectMapper.readValue<AnyRTCEvent.Payload.UploadedEvent>(anyRTCEvent.payload.details)
+            log.info("uploaded event: {}", uploadedEvent)
 //            // TODO calllback from
-//            val key = ""
-//            val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, key)
-//            val uid = ""
-//            minIOService.uploadFile(
-//                ossObject.objectContent,
-//                ossObject.objectMetadata.contentLength,
-//                "video/livestreaming/$uid/$key",
-//                ossObject.objectMetadata.contentType
-//            )
+            val key = ""
+
+            uploadedEvent.fileList.find { it.trackType == AnyRTCEvent.Payload.UploadedEvent.FileItem.Type.audio_and_video }
+                ?.let { m3u8File ->
+                    val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, m3u8File.fileName)
+                    val uid = m3u8File.uid
+                    val m3u8FileContent = IOUtils.toString(ossObject.objectContent, Charset.defaultCharset())
+                    log.info("uid:{} m3u8File:{}\n{}", uid, m3u8File, m3u8FileContent)
+
+                    minIOService.uploadFile(
+                        ByteArrayInputStream(m3u8FileContent.toByteArray()),
+                        ossObject.objectMetadata.contentLength,
+                        "video/livestreaming/$uid/$key",
+                        ossObject.objectMetadata.contentType
+                    )
+
+                    m3u8FileContent.lines().filter {
+                        it.endsWith(".ts")
+                    }.forEach { tsFileName ->
+                        val tsObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, tsFileName)
+                        log.info("uid:{} ts:{}", uid,tsFileName)
+                        minIOService.uploadFile(
+                            tsObject.objectContent, ossObject.objectMetadata.contentLength,
+                            "video/livestreaming/$uid/$tsFileName",
+                            ossObject.objectMetadata.contentType
+                        )
+                    }
+
+                }
+
         }
     }
 
