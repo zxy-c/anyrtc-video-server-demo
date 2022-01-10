@@ -57,11 +57,12 @@ class AnyRTCMessageController(
                     val uid: String,
                     val mixedAllUser: Boolean,
                     val isPlayable: Boolean,
-                    val liceStartTime: Long
+                    val sliceStartTime: Long
                 ) {
                     @Suppress("EnumEntryName")
                     enum class Type {
                         audio_and_video,
+
                         audio,
                         video
                     }
