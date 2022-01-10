@@ -7,6 +7,7 @@ import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.zxy.demo.anyrtcvideoserverdemo.configuration.AliyunOSSProperties
 import com.zxy.demo.anyrtcvideoserverdemo.service.MinIOService
 import com.zxy.demo.anyrtcvideoserverdemo.utils.LoggerDelegate
+import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -68,7 +69,7 @@ class AnyRTCMessageController(
     }
 
 
-    @PostMapping
+    @PostMapping(consumes = [MediaType.ALL_VALUE])
     fun events(@RequestBody anyRTCEvent: AnyRTCEvent) {
         log.info("anyrtc event : {}",anyRTCEvent)
         if (anyRTCEvent.eventType==31){
