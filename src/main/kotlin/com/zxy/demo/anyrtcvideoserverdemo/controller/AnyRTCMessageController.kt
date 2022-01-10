@@ -3,6 +3,7 @@ package com.zxy.demo.anyrtcvideoserverdemo.controller
 import com.aliyun.oss.OSS
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.fasterxml.jackson.module.kotlin.treeToValue
 import com.zxy.demo.anyrtcvideoserverdemo.configuration.AliyunOSSProperties
 import com.zxy.demo.anyrtcvideoserverdemo.service.MinIOService
@@ -70,7 +71,8 @@ class AnyRTCMessageController(
 
 
     @PostMapping(consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE,MediaType.APPLICATION_JSON_VALUE])
-    fun events(@RequestBody anyRTCEvent: AnyRTCEvent) {
+    fun events(@RequestBody body: String) {
+        val anyRTCEvent = objectMapper.readValue<AnyRTCEvent>(body)
         log.info("anyrtc event : {}",anyRTCEvent)
         if (anyRTCEvent.eventType==31){
             val uploadedEvent = objectMapper.treeToValue<AnyRTCEvent.Payload.UploadedEvent>(anyRTCEvent.payload.details)

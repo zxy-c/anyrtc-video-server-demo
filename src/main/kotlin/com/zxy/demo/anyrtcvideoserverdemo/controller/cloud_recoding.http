@@ -31,3 +31,4 @@ Content-Type: application/json;charset=utf-8
 
 ###
 POST http://rtcback.zhiyashengya.com/anyrtc/events
+Content-Type: application/octet-stream
