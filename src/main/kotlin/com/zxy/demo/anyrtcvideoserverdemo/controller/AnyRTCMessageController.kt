@@ -69,7 +69,7 @@ class AnyRTCMessageController(
     }
 
 
-    @PostMapping(consumes = [MediaType.ALL_VALUE])
+    @PostMapping(consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE,MediaType.APPLICATION_JSON_VALUE])
     fun events(@RequestBody anyRTCEvent: AnyRTCEvent) {
         log.info("anyrtc event : {}",anyRTCEvent)
         if (anyRTCEvent.eventType==31){
