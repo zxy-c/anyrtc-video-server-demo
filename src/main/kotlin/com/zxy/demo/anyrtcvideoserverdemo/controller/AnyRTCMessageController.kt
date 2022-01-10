@@ -32,7 +32,7 @@ class AnyRTCMessageController(
     data class AnyRTCEvent(
         val eventType: Int,
         val productId: Int,
-        val noticeId: String,
+        val noticeId: String?,
         val notifyMs: Long,
         val payload: Payload
     ) {
@@ -72,8 +72,8 @@ class AnyRTCMessageController(
 
     @PostMapping(consumes = [MediaType.APPLICATION_OCTET_STREAM_VALUE,MediaType.APPLICATION_JSON_VALUE])
     fun events(@RequestBody body: String) {
+        log.info("anyrtc event : {}",body)
         val anyRTCEvent = objectMapper.readValue<AnyRTCEvent>(body)
-        log.info("anyrtc event : {}",anyRTCEvent)
         if (anyRTCEvent.eventType==31){
             val uploadedEvent = objectMapper.treeToValue<AnyRTCEvent.Payload.UploadedEvent>(anyRTCEvent.payload.details)
             log.info("uploaded event: {}",uploadedEvent)
