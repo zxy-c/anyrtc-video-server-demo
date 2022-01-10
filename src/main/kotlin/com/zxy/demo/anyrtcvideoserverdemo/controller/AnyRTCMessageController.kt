@@ -52,7 +52,7 @@ class AnyRTCMessageController(
                 val fileList: List<FileItem>
             ) {
                 data class FileItem(
-                    val fileName: String,
+                    val filename: String,
                     val trackType: Type,
                     val uid: String,
                     val mixedAllUser: Boolean,
@@ -83,7 +83,7 @@ class AnyRTCMessageController(
 
             uploadedEvent.fileList.find { it.trackType == AnyRTCEvent.Payload.UploadedEvent.FileItem.Type.audio_and_video }
                 ?.let { m3u8File ->
-                    val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, m3u8File.fileName)
+                    val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, m3u8File.filename)
                     val uid = m3u8File.uid
                     val m3u8FileContent = IOUtils.toString(ossObject.objectContent, Charset.defaultCharset())
                     log.info("uid:{} m3u8File:{}\n{}", uid, m3u8File, m3u8FileContent)
