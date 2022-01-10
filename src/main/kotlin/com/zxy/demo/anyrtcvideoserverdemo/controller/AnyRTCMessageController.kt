@@ -62,7 +62,6 @@ class AnyRTCMessageController(
                     @Suppress("EnumEntryName")
                     enum class Type {
                         audio_and_video,
-
                         audio,
                         video
                     }
@@ -79,12 +78,11 @@ class AnyRTCMessageController(
         if (anyRTCEvent.eventType == 31) {
             val uploadedEvent = objectMapper.readValue<AnyRTCEvent.Payload.UploadedEvent>(anyRTCEvent.payload.details)
             log.info("uploaded event: {}", uploadedEvent)
-//            // TODO calllback from
-            val key = ""
 
             uploadedEvent.fileList.find { it.trackType == AnyRTCEvent.Payload.UploadedEvent.FileItem.Type.audio_and_video }
                 ?.let { m3u8File ->
-                    val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, m3u8File.filename)
+                    val filename = m3u8File.filename
+                    val ossObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, filename)
                     val uid = m3u8File.uid
                     val m3u8FileContent = IOUtils.toString(ossObject.objectContent, Charset.defaultCharset())
                     log.info("uid:{} m3u8File:{}\n{}", uid, m3u8File, m3u8FileContent)
@@ -92,7 +90,7 @@ class AnyRTCMessageController(
                     minIOService.uploadFile(
                         ByteArrayInputStream(m3u8FileContent.toByteArray()),
                         ossObject.objectMetadata.contentLength,
-                        "video/livestreaming/$uid/$key",
+                        "video/livestreaming/$uid/$filename",
                         ossObject.objectMetadata.contentType
                     )
 
@@ -102,9 +100,9 @@ class AnyRTCMessageController(
                         val tsObject = aliyunOSSClient.getObject(aliyunOSSProperties.bucket, tsFileName)
                         log.info("uid:{} ts:{}", uid,tsFileName)
                         minIOService.uploadFile(
-                            tsObject.objectContent, ossObject.objectMetadata.contentLength,
+                            tsObject.objectContent, tsObject.objectMetadata.contentLength,
                             "video/livestreaming/$uid/$tsFileName",
-                            ossObject.objectMetadata.contentType
+                            tsObject.objectMetadata.contentType
                         )
                     }
 
