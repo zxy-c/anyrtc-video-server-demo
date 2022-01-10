@@ -32,7 +32,7 @@ class AnyRTCMessageController(
     data class AnyRTCEvent(
         val eventType: Int,
         val productId: Int,
-        val noticeId: String?,
+        val noticeID: String,
         val notifyMs: Long,
         val payload: Payload
     ) {
