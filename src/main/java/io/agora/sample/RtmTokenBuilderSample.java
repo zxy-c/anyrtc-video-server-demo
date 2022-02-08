@@ -9,9 +9,9 @@ public class RtmTokenBuilderSample {
     private static String userId = "2882341273";
     private static int expireTimestamp = 0;
 
-    public static void main(String[] args) throws Exception {
-    	RtmTokenBuilder token = new RtmTokenBuilder();
-        String result = token.buildToken(appId, appCertificate, userId, Role.Rtm_User, expireTimestamp);
-        System.out.println(result);
-    }
+//    public static void main(String[] args) throws Exception {
+//    	RtmTokenBuilder token = new RtmTokenBuilder();
+//        String result = token.buildToken(appId, appCertificate, userId, Role.Rtm_User, expireTimestamp);
+//        System.out.println(result);
+//    }
 }
