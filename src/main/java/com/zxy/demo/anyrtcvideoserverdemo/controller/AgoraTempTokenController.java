@@ -1,7 +1,6 @@
 package com.zxy.demo.anyrtcvideoserverdemo.controller;
 
 import com.zxy.demo.anyrtcvideoserverdemo.service.AgoraTempTokenService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,6 +20,11 @@ public class AgoraTempTokenController {
     @GetMapping
     public String getAgoraTempToken(@RequestParam String uid) throws Exception {
         return agoraTempTokenService.getAgoraTempToken(uid);
+    }
+    
+    @GetMapping("rtc")
+    public String getAgoraRtcToken(@RequestParam String channelName) throws Exception {
+        return agoraTempTokenService.getAgoraRtcToken(channelName);
     }
 
 }
